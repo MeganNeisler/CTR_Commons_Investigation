@@ -8,14 +8,13 @@ import::from(
   dplyr,
   keep_where = filter, select,
   group_by, ungroup,
-  mutate, arrange, summarize, tally,
-  case_when, if_else
+  mutate
 )
 
 fig_path <- file.path("figures")
 plot_resolution <- 192
 
-#Load data queried from webrequest and cirrusserachrequestset data
+#read data queried from webrequest and cirrusserachrequestset data
 daily_ctr_commons <- rbind(readr::read_rds("data/daily_ctr_commons.rds")) %>%
   mutate(date = lubridate::ymd(date))  %>%
   cbind(
@@ -39,10 +38,7 @@ p <-  daily_ctr_commons %>%
 ggsave("daily_ctr_commons.png", p, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
 rm(p)
 
-#The overall ctr is higher than found using eventlogging; however, there is sudden drop the last week in January with it's lowest point on Jan 28th.
-#I reviewed the ctr for both COmmons and English Wikipedia in January to determine if this drop was associated with just Commons.
-
-#CTR Comparison between English Wikipedia and Commons
+#CTR Comparison between English Wikipedia and Commons. Data filtered to remove identified bots.
 
 ctr_commons_enwiki <- rbind(readr::read_rds("data/daily_ctr_commons_enwiki.rds")) 
 
@@ -67,7 +63,7 @@ p <- ctr_commons_enwiki %>%
 ggsave("daily_ctr_commons_enwiki.png", p, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
 rm(p)
 
-#File vs Article search clicks on Commons
+#File vs article search clicks on Commons
 
 daily_clicks_bynamespace <- rbind(readr::read_rds("data/daily_clicks_bynamespace.rds")) %>%
   mutate(date = lubridate::ymd(date),
@@ -89,5 +85,16 @@ p <-  daily_clicks_bynamespace %>%
 
 ggsave("daily_clicks_bynamespace.png", p, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
 rm(p)
+
+
+#Look at searchs by clicks to find potential bot leading to CTR decline between Jan 23 and Jan 28, 2018
+
+daily_searches_byuser <- rbind(readr::read_rds("data/daily_searches_byuser.rds")) %>%
+  mutate(date = lubridate::ymd(date),
+         searches = as.numeric(n_search)) %>%
+  filter(searches > 1000)
+
+#Redo analysis filtering out ip address "115.29.47.109"
+
 
 
