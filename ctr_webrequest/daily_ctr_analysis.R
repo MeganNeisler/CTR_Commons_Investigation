@@ -61,14 +61,13 @@ ctr_commons_enwiki_filtered <- ctr_commons_enwiki%>%
     as.data.frame(binom:::binom.bayes(x = .$n_click, n = .$n_search, conf.level = 0.95, tol = 1e-9))
   ) %>%
   ggplot(aes(x = date, color = wiki, y = mean, ymin = lower, ymax = upper)) +
-  geom_ribbon(aes(ymin = lower, ymax = upper, fill = wiki), alpha = 0.1, color = NA) +
   geom_line() +
   scale_color_brewer("Wiki", palette = "Set1") +
   scale_fill_brewer("Wiki", palette = "Set1") +
   scale_y_continuous("Clickthrough rate", labels = scales::percent_format()) +
   scale_x_date(labels = date_format("%d-%b-%y"), date_breaks = "1 week") +
   labs(title = "Daily full-text clickthrough rates on desktop", 
-       subtitle = "January 1, 2018 to March 10,2018",
+       subtitle = "December 29, 2017 to February 28, 2018",
        caption = "From webrequest and cirrusesearchrequest data. Data filtered to remove suspected bots") +
   wmf::theme_min()
 ggsave("daily_ctr_commons_enwiki_filtered.png", ctr_commons_enwiki_filtered, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
@@ -97,7 +96,7 @@ p <- daily_ctr_bynamespace %>%
   scale_y_continuous(trans= "log", name = "Clickthrough rate (log scale)", labels = scales::percent_format()) +
   scale_color_brewer("Namespace", palette = "Set1") +
   labs(title = "Daily full-text search clickthrough rate on desktop on Wikimedia Common by namespace", 
-       subtitle = "January 1, 2018 to March 10,2018",
+       subtitle = "January 1, 2018 to March 2, 2018",
        caption = "From webrequest and cirrusesearchrequest data") +
   wmf::theme_min()
 
