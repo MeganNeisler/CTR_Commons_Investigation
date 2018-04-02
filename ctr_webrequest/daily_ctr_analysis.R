@@ -51,15 +51,12 @@ daily_searches_byuser <- rbind(readr::read_rds("data/daily_searches_byuser.rds")
 daily_ctr_botfilter <- rbind(readr::read_rds("data/daily_ctr_botfilter.rds")) %>%
   mutate(date = lubridate::ymd(date))
 
-ctr_commons_enwiki_filtered <- rbind(readr::read_rds("data/daily_ctr_commons_enwiki.rds")) %>%
-  mutate(date = lubridate::ymd(date)) 
-
-ctr_commons_enwiki_filtered$n_search <- replace(ctr_commons_enwiki$n_search, 
+ctr_commons_enwiki$n_search <- replace(ctr_commons_enwiki$n_search, 
                                        ctr_commons_enwiki$date >= '2018-01-25' & ctr_commons_enwiki$date <= '2018-01-31', 
                                        daily_ctr_botfilter$n_search)
   
 #Redo plot using filtered data
-p <- ctr_commons_enwiki_filtered %>%
+ctr_commons_enwiki_filtered <- ctr_commons_enwiki%>%
   cbind(
     as.data.frame(binom:::binom.bayes(x = .$n_click, n = .$n_search, conf.level = 0.95, tol = 1e-9))
   ) %>%
@@ -74,8 +71,8 @@ p <- ctr_commons_enwiki_filtered %>%
        subtitle = "January 1, 2018 to March 10,2018",
        caption = "From webrequest and cirrusesearchrequest data. Data filtered to remove suspected bots") +
   wmf::theme_min()
-ggsave("daily_ctr_commons_enwiki_filtered.png", p, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
-rm(p)
+ggsave("daily_ctr_commons_enwiki_filtered.png", ctr_commons_enwiki_filtered, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
+rm(ctr_commons_enwiki_filtered)
 
   
   

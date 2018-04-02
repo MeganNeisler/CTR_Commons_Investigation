@@ -1,7 +1,7 @@
 # Investigate the full-text desktop search CTR decline on Wikimedia Commons
 
 ## Overview
-In [T187827](https://phabricator.wikimedia.org/T187827), we saw a decline in the overall desktop full-text search-wise clickthrough rate on Commons from 10.42% in November 2017 to 3.17% in February 2018. To find out the cause of the decline, we reviewed search metrics from November 2017 to February 2018 to identify the time and potential causes of the decline.
+In [T187827](https://phabricator.wikimedia.org/T187827), we saw a decline in the overall desktop full-text search-wise clickthrough rate (ctr) on Commons from 10.42% in November 2017 to 3.17% in February 2018. To find out the cause of the decline, we reviewed search metrics from November 2017 to February 2018 to identify the time and potential causes of the decline.
 
 ![](ctr_eventlogging/figures/daily_ctr_Feb18.png)
 
@@ -16,7 +16,7 @@ Ticket: [T188421](https://phabricator.wikimedia.org/T188421)
 
 ## Search-wise and session-wise CTR from November 2017 to February 2018. 
 
-We computed the clickthrough rate on Commons from November 2017 to February 2018 using eventlogging data (TestSearchSatisfaction2 table).
+We computed the ctr on Commons from November 2017 to February 2018 using eventlogging data (TestSearchSatisfaction2 table).
 
 ![](ctr_eventlogging/figures/daily_ctr_commons_Nov17Feb18.png)
 
