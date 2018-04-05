@@ -3,7 +3,7 @@ library(tidyverse)
 library(ggplot2)
 library(scales)
 library(magrittr)
-library(reshape)
+library(reshape2)
 import::from(
   dplyr,
   keep_where = filter, 
@@ -61,19 +61,18 @@ ctr_commons_enwiki_filtered <- ctr_commons_enwiki%>%
     as.data.frame(binom:::binom.bayes(x = .$n_click, n = .$n_search, conf.level = 0.95, tol = 1e-9))
   ) %>%
   ggplot(aes(x = date, color = wiki, y = mean, ymin = lower, ymax = upper)) +
-  geom_line() +
+  geom_line(size= 1.5) +
   scale_color_brewer("Wiki", palette = "Set1") +
   scale_fill_brewer("Wiki", palette = "Set1") +
   scale_y_continuous("Clickthrough rate", labels = scales::percent_format()) +
-  scale_x_date(labels = date_format("%d-%b-%y"), date_breaks = "1 week") +
-  labs(title = "Daily full-text clickthrough rates on desktop", 
-       subtitle = "December 29, 2017 to February 28, 2018",
-       caption = "From webrequest and cirrusesearchrequest data. Data filtered to remove suspected bots") +
+  scale_x_date(labels = date_format("%d-%b-%y") , date_breaks = "1 week") +
+  labs(title = "Daily full-text search clickthrough rates on desktop", 
+       subtitle = "December 29, 2017 to February 28, 2018, From webrequest and cirrusesearchrequest data.",
+       caption = "Data filtered to remove suspected bots") +
   wmf::theme_min()
 ggsave("daily_ctr_commons_enwiki_filtered.png", ctr_commons_enwiki_filtered, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)
 rm(ctr_commons_enwiki_filtered)
 
-  
   
 #CTR by namespace on Commons
 ##Reshape data
@@ -83,21 +82,19 @@ daily_ctr_bynamespace <- rbind(readr::read_rds("data/daily_ctr_bynamespace.rds")
 
 daily_ctr_bynamespace$namespace %<>% factor(c('click_on_ns0', 'click_on_ns6','click_on_ns14'), c("Main Article", "File", "Category"))
 
-
+  
 #Plot ctr by namespace on commons 
 p <- daily_ctr_bynamespace %>%
   cbind(
     as.data.frame(binom:::binom.bayes(x = .$value, n = .$n_search, conf.level = 0.95, tol = 1e-9))
   ) %>% 
   ggplot(aes(x = date, color = namespace, y = mean, ymin = lower, ymax = upper)) +
-  geom_line() +
-  scale_color_brewer("namespace", palette = "Set1") +
+  geom_line(size = 1.5) + 
   scale_x_date(labels = date_format("%d-%b-%y"), date_breaks = "1 week") +
-  scale_y_continuous(trans= "log", name = "Clickthrough rate (log scale)", labels = scales::percent_format()) +
+  scale_y_continuous(trans = "log", name = "Clickthrough rate (log scale)", labels = scales::percent_format()) +
   scale_color_brewer("Namespace", palette = "Set1") +
-  labs(title = "Daily full-text search clickthrough rate on desktop on Wikimedia Common by namespace", 
-       subtitle = "January 1, 2018 to March 2, 2018",
-       caption = "From webrequest and cirrusesearchrequest data") +
+  labs(title = "Daily full-text search clickthrough rate on desktop on Wikimedia Commons by namespace", 
+       subtitle = "January 11, 2018 to March 11, 2018, From webrequest and cirrusesearchrequest data") +
   wmf::theme_min()
 
 ggsave("daily_ctr_bynamespace.png", p, path = fig_path, units = "in", dpi = plot_resolution, height = 6, width = 10, limitsize = FALSE)

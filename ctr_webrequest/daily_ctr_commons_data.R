@@ -156,8 +156,8 @@ system("scp mneisler@stat5:/home/mneisler/daily_searches_byuser.rds daily_search
 ## Rerun the query to focus on top 3 namespaces. 
 #Remotely from Stat 5
 
-start_date <- as.Date("2018-01-02")
-end_date <- as.Date("2018-03-02")
+start_date <- as.Date("2018-01-11")
+end_date <- as.Date("2018-03-11")
 
 daily_ctr_bynamespace <- do.call(rbind, lapply(seq(start_date, end_date, "day"), function(date) {
   cat("Fetching webrequest data from ", as.character(date), "\n")
@@ -198,7 +198,7 @@ daily_ctr_bynamespace <- do.call(rbind, lapply(seq(start_date, end_date, "day"),
                  ) AS search_requests
                  LEFT JOIN
                  (
-                 SELECT PARSE_URL(referer, 'QUERY', 'searchToken') AS searchToken, '1' AS click, namespace_id AS namespace
+                 SELECT DISTINCT PARSE_URL(referer, 'QUERY', 'searchToken') AS searchToken, namespace_id AS namespace, '1' AS click
                  from wmf.webrequest",
                  clause_data$date_clause,
                  " and webrequest_source = 'text'
@@ -207,22 +207,10 @@ daily_ctr_bynamespace <- do.call(rbind, lapply(seq(start_date, end_date, "day"),
                  and referer_class = 'internal'
                  and LENGTH(PARSE_URL(referer, 'QUERY', 'searchToken')) > 0
                  AND http_status IN('200', '304') 
-                 AND (
-                 -- click to pages
-                 (
-                 is_pageview = TRUE
+                 AND is_pageview = TRUE
                  AND page_id IS NOT NULL
                  and page_id != 1 
-                 -- include namespaces 0, 6 and 14
                  and namespace_id IN (0, 6, 14)
-                 )
-                 -- click on thumbnails to open media viewer
-                 OR (
-                 uri_path = '/w/api.php'
-                 and namespace_id IN (0, 6, 14)
-                 and PARSE_URL(CONCAT('http://', uri_host, uri_path, uri_query), 'QUERY', 'prop') = 'imageinfo'
-                 )
-                 )
                  ) AS clickthroughs ON (search_requests.id=clickthroughs.searchToken)
                  ;") 
 
